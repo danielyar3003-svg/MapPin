@@ -1,0 +1,46 @@
+{
+  "name": "mappin",
+  "version": "0.1.0",
+  "description": "Редактор карт для SA-MP и open.mp",
+  "private": true,
+  "type": "module",
+  "main": "dist-electron/main.cjs",
+  "scripts": {
+    "dev:web": "vite",
+    "build:web": "tsc --noEmit && vite build",
+    "build:electron": "node scripts/build-electron.mjs",
+    "build": "npm run build:web && npm run build:electron",
+    "start": "npm run build && electron .",
+    "dist": "npm run build && electron-builder --win",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "build": {
+    "appId": "app.mappin.editor",
+    "productName": "MapPin",
+    "files": [
+      "dist/**",
+      "dist-electron/**",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    }
+  },
+  "dependencies": {
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/three": "^0.187.0",
+    "electron": "^45.3.1",
+    "electron-builder": "^26.18.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}
