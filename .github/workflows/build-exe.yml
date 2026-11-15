@@ -1,0 +1,48 @@
+name: Сборка MapPin.exe
+
+on:
+  push:
+    branches: [claude/sleepy-wright-kch4z2, main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npx electron-builder --win portable --publish never
+
+      - name: Сохранить exe как артефакт
+        uses: actions/upload-artifact@v4
+        with:
+          name: MapPin-windows
+          path: release/MapPin.exe
+
+      - name: Перенести тег latest на этот коммит
+        shell: bash
+        run: |
+          git tag -f latest
+          git push -f origin latest
+
+      - name: Выложить в релиз
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: MapPin (последняя сборка)
+          body: |
+            Скачайте **MapPin.exe** ниже и запустите. Установка не нужна.
+            Сборка с коммита ${{ github.sha }}.
+          files: release/MapPin.exe
+          make_latest: true
